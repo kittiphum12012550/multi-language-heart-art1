@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Good Morning Heart</title>
+    <title>Yellow Morning Heart</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
     <style>
         body {
-            /* พื้นหลังไล่สีท้องฟ้ายามรุ่งสาง (ฟ้ามืดไปหาแสงอาทิตย์อ่อนๆ ด้านล่าง) */
-            background: radial-gradient(circle at bottom center, #4a1c40 0%, #160f29 50%, #050505 100%);
+            /* พื้นหลังปรับเป็นโทนอุ่นมืดๆ เพื่อขับสีเหลืองให้เรืองแสงชัดเจน */
+            background: radial-gradient(circle at center, #2a1f00 0%, #050505 100%);
             margin: 0;
             overflow: hidden;
             display: flex;
@@ -35,18 +35,18 @@
         }
         
         .text-word.settled {
-            animation: morningGlow 3s infinite alternate ease-in-out;
+            animation: yellowGlow 3s infinite alternate ease-in-out;
         }
 
-        /* เอฟเฟกต์แสงแดดกระทบ สว่างและนุ่มนวล */
-        @keyframes morningGlow {
+        /* เอฟเฟกต์แสงสีเหลืองเรืองแสง */
+        @keyframes yellowGlow {
             0% { 
                 text-shadow: 0 0 3px currentColor; 
                 filter: brightness(0.9); 
             }
             100% { 
-                text-shadow: 0 0 12px currentColor, 0 0 20px currentColor; 
-                filter: brightness(1.25); 
+                text-shadow: 0 0 12px currentColor, 0 0 22px currentColor; 
+                filter: brightness(1.3); 
                 transform: translate(-50%, -50%) scale(1.04); 
             }
         }
@@ -56,7 +56,6 @@
     <div id="heart-container"></div>
 
     <script>
-        // ชุดคำทักทายตอนเช้าภาษาต่างๆ
         const phrases = [
             "Good morning", "อรุณสวัสดิ์", "おはよう", "Buenos días",
             "Bonjour", "Guten Morgen", "Buongiorno", "สวัสดีตอนเช้า",
@@ -64,14 +63,14 @@
             "Morning!", "Have a great day", "ตื่นได้แล้ว"
         ];
 
-        // โทนสีแสงอาทิตย์ยามเช้า (เหลือง ทอง ส้ม ส้มอมชมพู)
+        // คุมโทนสีเหลืองล้วน (ไล่ตั้งแต่เหลืองนีออน เหลืองทอง ไปจนถึงเหลืองนวลๆ)
         const colors = [
+            '#FFFF00', // Yellow
+            '#FFEA00', // Bright Yellow
             '#FFD700', // Gold
-            '#FFA500', // Orange
-            '#FF8C00', // Dark Orange
-            '#FF6347', // Tomato/Sunrise Pink
-            '#FFE4B5', // Moccasin/Soft Sunlight
-            '#FFB6C1'  // Light Pink
+            '#F0E68C', // Khaki/Warm Yellow
+            '#FFFACD', // Lemon Chiffon
+            '#FFC300'  // Golden Yellow
         ];
 
         const container = document.getElementById('heart-container');
