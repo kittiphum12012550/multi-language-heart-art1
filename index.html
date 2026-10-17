@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Good Morning Heart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            /* พื้นหลังไล่สีท้องฟ้ายามรุ่งสาง (ฟ้ามืดไปหาแสงอาทิตย์อ่อนๆ ด้านล่าง) */
+            background: radial-gradient(circle at bottom center, #4a1c40 0%, #160f29 50%, #050505 100%);
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #heart-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .text-word {
+            position: absolute;
+            opacity: 0;
+            white-space: nowrap;
+            pointer-events: none;
+            font-family: 'Nunito', sans-serif;
+            transform: translate(-50%, -50%) scale(4);
+            filter: blur(8px);
+            transition: transform 2.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        opacity 1.8s ease-out,
+                        filter 2.2s ease-out;
+        }
+        
+        .text-word.settled {
+            animation: morningGlow 3s infinite alternate ease-in-out;
+        }
+
+        /* เอฟเฟกต์แสงแดดกระทบ สว่างและนุ่มนวล */
+        @keyframes morningGlow {
+            0% { 
+                text-shadow: 0 0 3px currentColor; 
+                filter: brightness(0.9); 
+            }
+            100% { 
+                text-shadow: 0 0 12px currentColor, 0 0 20px currentColor; 
+                filter: brightness(1.25); 
+                transform: translate(-50%, -50%) scale(1.04); 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="heart-container"></div>
+
+    <script>
+        // ชุดคำทักทายตอนเช้าภาษาต่างๆ
+        const phrases = [
+            "Good morning", "อรุณสวัสดิ์", "おはよう", "Buenos días",
+            "Bonjour", "Guten Morgen", "Buongiorno", "สวัสดีตอนเช้า",
+            "早安", "좋은 아침", "Bom dia", "Доброе утро",
+            "Morning!", "Have a great day", "ตื่นได้แล้ว"
+        ];
+
+        // โทนสีแสงอาทิตย์ยามเช้า (เหลือง ทอง ส้ม ส้มอมชมพู)
+        const colors = [
+            '#FFD700', // Gold
+            '#FFA500', // Orange
+            '#FF8C00', // Dark Orange
+            '#FF6347', // Tomato/Sunrise Pink
+            '#FFE4B5', // Moccasin/Soft Sunlight
+            '#FFB6C1'  // Light Pink
+        ];
+
+        const container = document.getElementById('heart-container');
+        let centerX = window.innerWidth / 2;
+        let centerY = window.innerHeight / 2;
+        
+        const scale = 230; 
+        const maxWords = 300; 
+
+        const placedWords = [];
+
+        function isOverlapping(x, y, width, height) {
+            const paddingX = 6; 
+            const paddingY = 4;  
+
+            for (let word of placedWords) {
+                if (
+                    x < word.x + word.width + paddingX &&
+                    x + width + paddingX > word.x &&
+                    y < word.y + word.height + paddingY &&
+                    y + height + paddingY > word.y
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function getHeartTargetPosition(text, fontSize) {
+            const fontStyle = '600 ' + fontSize + " 'Nunito', sans-serif";
+            const span = document.createElement('span');
+            span.style.font = fontStyle;
+            span.style.visibility = 'hidden';
+            span.style.position = 'absolute';
+            span.innerText = text;
+            document.body.appendChild(span);
+            
+            const width = span.offsetWidth;
+            const height = span.offsetHeight;
+            document.body.removeChild(span);
+
+            let screenX, screenY;
+            let attempts = 0;
+            const maxAttempts = 2000; 
+
+            while (attempts < maxAttempts) {
+                const targetX = (Math.random() * 3) - 1.5;
+                const targetY = (Math.random() * 3) - 1.5;
+
+                if (Math.pow(targetX*targetX + targetY*targetY - 1, 3) - (targetX*targetX * Math.pow(targetY, 3)) <= 0) {
+                    screenX = centerX + (targetX * scale);
+                    screenY = centerY + (-targetY * scale);
+
+                    if (!isOverlapping(screenX - width/2, screenY - height/2, width, height)) {
+                        placedWords.push({
+                            x: screenX - width/2,
+                            y: screenY - height/2,
+                            width: width,
+                            height: height
+                        });
+                        return { x: screenX, y: screenY };
+                    }
+                }
+                attempts++;
+            }
+            return null; 
+        }
+
+        function spawnWord(index) {
+            const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+            const fontSize = `${Math.floor(Math.random() * 8) + 11}px`; 
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            const targetPos = getHeartTargetPosition(phrase, fontSize);
+            if (!targetPos) return; 
+
+            const textEl = document.createElement('div');
+            textEl.className = 'text-word';
+            textEl.style.fontSize = fontSize;
+            textEl.style.color = color;
+            textEl.innerText = phrase;
+
+            const angle = Math.random() * Math.PI * 2;
+            const radius = Math.max(window.innerWidth, window.innerHeight) / 1.2;
+            const startX = centerX + Math.cos(angle) * radius;
+            const startY = centerY + Math.sin(angle) * radius;
+
+            textEl.style.left = `${startX}px`;
+            textEl.style.top = `${startY}px`;
+            container.appendChild(textEl);
+
+            setTimeout(() => {
+                textEl.style.opacity = '1';
+                textEl.style.filter = 'blur(0px)';
+                textEl.style.transform = `translate(${targetPos.x - startX}px, ${targetPos.y - startY}px) scale(1)`;
+            }, 50); 
+
+            setTimeout(() => {
+                textEl.style.left = `${targetPos.x}px`;
+                textEl.style.top = `${targetPos.y}px`;
+                textEl.style.transition = 'none'; 
+                textEl.style.transform = 'translate(-50%, -50%) scale(1)';
+                
+                textEl.style.animationDelay = `${Math.random() * 2}s`;
+                textEl.classList.add('settled');
+            }, 2500); 
+        }
+
+        for (let i = 0; i < maxWords; i++) {
+            setTimeout(() => {
+                spawnWord(i);
+            }, i * 40); 
+        }
+
+        window.addEventListener('resize', () => {
+            centerX = window.innerWidth / 2;
+            centerY = window.innerHeight / 2;
+        });
+    </script>
+</body>
+</html>
